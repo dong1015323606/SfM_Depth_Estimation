@@ -27,6 +27,7 @@ def concat_image_seq(seq):
 def dump_example(n, args):
     if n % 2000 == 0:
         print('Progress %d/%d....' % (n, data_loader.num_train))
+
     example = data_loader.get_train_example_with_idx(n)
     if example == False:
         return
@@ -39,7 +40,7 @@ def dump_example(n, args):
     dump_dir = os.path.join(args.dump_root, example['folder_name'])
     # if not os.path.isdir(dump_dir):
     #     os.makedirs(dump_dir, exist_ok=True)
-    try: 
+    try:
         os.makedirs(dump_dir)
     except OSError:
         if not os.path.isdir(dump_dir):
@@ -85,7 +86,7 @@ def main():
                                         img_width=args.img_width,
                                         seq_length=args.seq_length)
 
-    Parallel(n_jobs=args.num_threads)(delayed(dump_example)(n, args) for n in range(data_loader.num_train))
+    #Parallel(n_jobs=args.num_threads)(delayed(dump_example)(n, args) for n in range(data_loader.num_train))
 
     # Split into train/val
     np.random.seed(8964)
@@ -95,13 +96,13 @@ def main():
             for s in subfolders:
                 if not os.path.isdir(args.dump_root + '/%s' % s):
                     continue
-                imfiles = glob(os.path.join(args.dump_root, s, '*.jpg'))
+                imfiles = glob(os.path.join(args.dump_root, s, '*.jpg'))  ##这个代码有点意思，把一个文件夹中的特点数据收集为一个列表
                 frame_ids = [os.path.basename(fi).split('.')[0] for fi in imfiles]
                 for frame in frame_ids:
                     if np.random.random() < 0.1:
-                        vf.write('%s %s\n' % (s, frame))
+                        vf.write(args.dump_root + '/%s/%s\n' % (s, frame))
                     else:
-                        tf.write('%s %s\n' % (s, frame))
+                        tf.write(args.dump_root + '/%s/%s\n' % (s, frame))
 
 main()
 

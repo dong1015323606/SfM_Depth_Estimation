@@ -85,8 +85,15 @@ def main():
                                         img_height=args.img_height,
                                         img_width=args.img_width,
                                         seq_length=args.seq_length)
+    if args.dataset_name == 'caddy':
+        from caddy.caddy_raw_loader import caddy_raw_loader
+        data_loader = caddy_raw_loader(args.dataset_dir,
+                                       img_height=args.img_height,
+                                       img_width=args.img_width,
+                                       seq_length=args.seq_length
+                                       )
 
-    #Parallel(n_jobs=args.num_threads)(delayed(dump_example)(n, args) for n in range(data_loader.num_train))
+    Parallel(n_jobs=args.num_threads)(delayed(dump_example)(n, args) for n in range(data_loader.num_train))
 
     # Split into train/val
     np.random.seed(8964)
